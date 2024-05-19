@@ -8,7 +8,7 @@ contract NFTTest is Test {
   NFT public nft;
 
   function setUp() public {
-    nft = new NFT("Test NFT", "NFT");
+    nft = new NFT(address(this));
   }
 
   function test_Mint() public {

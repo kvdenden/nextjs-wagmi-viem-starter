@@ -16,8 +16,8 @@ contract NFT is ERC721, AccessControl, IMintableERC721 {
 
   uint256 private _mintCounter;
 
-  constructor(string memory name, string memory symbol) ERC721(name, symbol) {
-    _grantRole(DEFAULT_ADMIN_ROLE, msg.sender);
+  constructor(address owner) ERC721("Non Fungible Token", "NFT") {
+    _grantRole(DEFAULT_ADMIN_ROLE, owner);
   }
 
   function mint(address to, uint256 quantity)
