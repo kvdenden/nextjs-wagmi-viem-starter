@@ -1,0 +1,7 @@
+{
+  "prettier.printWidth": 120,
+
+  "solidity.packageDefaultDependenciesContractsDirectory": "contracts/src",
+  "solidity.packageDefaultDependenciesDirectory": "contracts/lib",
+  "search.exclude": { "contracts/lib": true }
+}
