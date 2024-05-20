@@ -7,7 +7,7 @@ import { NFT } from "../src/NFT.sol";
 import { TokenRenderer } from "../src/TokenRenderer.sol";
 import { SignatureMinter } from "../src/SignatureMinter.sol";
 
-contract DeployScript is Script {
+contract Deploy is Script {
   function setUp() public { }
 
   function run() public {
@@ -27,6 +27,9 @@ contract DeployScript is Script {
 
     SignatureMinter minter = new SignatureMinter(address(nft), deployer);
     console.log("SignatureMinter deployed at address: ", address(minter));
+
+    uint256 mintSupply = vm.envUint("MINTER_SUPPLY");
+    minter.setMintSupply(mintSupply);
 
     nft.grantRole(nft.MINTER_ROLE(), address(minter));
   }
