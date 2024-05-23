@@ -1,15 +1,17 @@
-"use client";
-import { useConnectModal } from "@rainbow-me/rainbowkit";
-import { useAccount } from "wagmi";
-import { ConnectButton as RainbowkitConnectButton } from "@rainbow-me/rainbowkit";
-import { Button } from "./ui/button";
+'use client'
+import { useConnectModal } from '@rainbow-me/rainbowkit'
+import { useAccount } from 'wagmi'
+import { ConnectButton as RainbowkitConnectButton } from '@rainbow-me/rainbowkit'
+import { Button } from './ui/button'
 
 export function ConnectButton() {
-  const { isConnected } = useAccount();
-  const { openConnectModal } = useConnectModal();
-
+  const { isConnected, isConnecting, isReconnecting } = useAccount()
+  const { openConnectModal } = useConnectModal()
   if (isConnected) {
-    return <RainbowkitConnectButton />;
+    return <RainbowkitConnectButton />
   }
-  return <Button onClick={openConnectModal}>Connect</Button>;
+  if (isConnecting || isReconnecting) {
+    return <Button disabled>Connecting...</Button>
+  }
+  return <Button onClick={openConnectModal}>Connect</Button>
 }
