@@ -7,6 +7,7 @@ import { useAccount, useBalance, useReadContracts, useWriteContract, useWaitForT
 import { signatureMinterAbi, nftAbi } from '@/web3/abi'
 import { CardDescription } from '@/components/ui/card'
 import { formatEther } from 'viem'
+import { toast } from 'sonner'
 
 export default function MintPanel() {
   const { isConnected, address } = useAccount()
@@ -49,9 +50,9 @@ export default function MintPanel() {
   const totalSupply = mintData && mintData[2].result
   const price = publicSaleConfig && quantity * publicSaleConfig.unitPrice
 
-  const { data: hash, writeContract, isPending, isError } = useWriteContract()
+  const { data: hash, writeContract, isPending, error, isError } = useWriteContract()
   const { isLoading: isConfirming, isSuccess: isConfirmed } = useWaitForTransactionReceipt({
-    hash: mintHash as `0x${string}`,
+    hash: hash,
   })
 
   const handleMint = async () => {
@@ -73,16 +74,24 @@ export default function MintPanel() {
   }
 
   useEffect(() => {
-    if (isPending) {
-      setButtonText('Confirm in wallet')
-    } else if (isConfirming) {
-      setButtonText('Confirming transaction')
-    } else {
+    if (isError) {
+      if ('shortMessage' in error) {
+        toast(`Transaction failed: ${error.shortMessage}`)
+      } else {
+        toast(`Transaction failed: ${error.message}`)
+      }
+      setButtonText('Mint')
+    }
+    if (!isPending) {
+      setButtonText('Mint')
+    }
+    if (isConfirmed) {
       setButtonText('Mint')
       setQuantity(BigInt(1))
+      toast(`Transaction confirmed: ${hash}`)
       refetchMintData()
     }
-  }, [isConfirmed, isConfirming, isPending, isError])
+  }, [isConfirmed, isConfirming, isPending, isError, error, hash, refetchMintData])
 
   const handleMinus = () => {
     if (quantity > 1) {
@@ -97,7 +106,7 @@ export default function MintPanel() {
     }
   }
 
-  if (mintDataIsLoading || isConfirming) {
+  if (mintDataIsLoading) {
     return (
       <Button className='w-full mt-6' disabled>
         Loading...
